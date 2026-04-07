@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Zap, Play, Pause, SkipForward, Save, Share2, Download } from 'lucide-react'
+import { Zap, Play, Pause, SkipForward, Save, FolderOpen, Download, Trash2, RotateCcw } from 'lucide-react'
 import Badge from '../ui/Badge'
+import { Circuit } from '../../types/circuit'
 
 interface ToolbarProps {
   circuitName: string
@@ -8,12 +9,17 @@ interface ToolbarProps {
   speed: number
   componentCount: number
   wireCount: number
+  circuit: Circuit
   onNameChange: (name: string) => void
   onPlay: () => void
   onPause: () => void
   onStep: () => void
   onSpeedChange: (s: number) => void
+  onLoadCircuit: (circuit: Circuit) => void
+  onUndo: () => void
 }
+
+const STORAGE_KEY = 'flux-saved-circuit'
 
 export default function Toolbar({
   circuitName,
@@ -21,19 +27,60 @@ export default function Toolbar({
   speed,
   componentCount,
   wireCount,
+  circuit,
   onNameChange,
   onPlay,
   onPause,
   onStep,
   onSpeedChange,
+  onLoadCircuit,
+  onUndo,
 }: ToolbarProps) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(circuitName)
-  const [toast, setToast] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null)
 
-  function showToast(msg: string) {
-    setToast(msg)
-    setTimeout(() => setToast(null), 2000)
+  function showToast(msg: string, ok = true) {
+    setToast({ msg, ok })
+    setTimeout(() => setToast(null), 2500)
+  }
+
+  function handleSave() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...circuit, name: circuitName }))
+      showToast('Circuit saved to browser!')
+    } catch {
+      showToast('Save failed', false)
+    }
+  }
+
+  function handleLoad() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (!raw) { showToast('No saved circuit found', false); return }
+      const loaded = JSON.parse(raw) as Circuit
+      onLoadCircuit(loaded)
+      onNameChange(loaded.name)
+      showToast(`Loaded "${loaded.name}"`)
+    } catch {
+      showToast('Load failed', false)
+    }
+  }
+
+  function handleExport() {
+    try {
+      const data = JSON.stringify({ ...circuit, name: circuitName }, null, 2)
+      const blob = new Blob([data], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${circuitName.replace(/\s+/g, '_')}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+      showToast('Exported!')
+    } catch {
+      showToast('Export failed', false)
+    }
   }
 
   const SPEEDS = [0.5, 1, 2, 4]
@@ -87,10 +134,18 @@ export default function Toolbar({
         <button
           onClick={onStep}
           className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 border border-gray-700 hover:bg-gray-800 transition-colors"
-          title="Step one clock cycle"
+          title="Step one clock cycle (advance CLOCK once)"
         >
           <SkipForward className="w-3 h-3" />
           Step
+        </button>
+
+        <button
+          onClick={onUndo}
+          className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 border border-gray-700 hover:bg-gray-800 transition-colors"
+          title="Undo (Ctrl+Z)"
+        >
+          <RotateCcw className="w-3 h-3" />
         </button>
       </div>
 
@@ -125,22 +180,25 @@ export default function Toolbar({
 
       <div className="flex items-center gap-1">
         <button
-          onClick={() => showToast('Circuit saved!')}
+          onClick={handleSave}
           className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          title="Save to browser (localStorage)"
         >
           <Save className="w-3.5 h-3.5" />
           Save
         </button>
         <button
-          onClick={() => showToast('Link copied!')}
+          onClick={handleLoad}
           className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          title="Load last saved circuit"
         >
-          <Share2 className="w-3.5 h-3.5" />
-          Share
+          <FolderOpen className="w-3.5 h-3.5" />
+          Load
         </button>
         <button
-          onClick={() => showToast('Exported!')}
+          onClick={handleExport}
           className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          title="Export circuit as JSON file"
         >
           <Download className="w-3.5 h-3.5" />
           Export
@@ -148,8 +206,8 @@ export default function Toolbar({
       </div>
 
       {toast && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-3 py-1.5 bg-green-700 text-white text-xs rounded shadow-lg z-50">
-          {toast}
+        <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 px-3 py-1.5 text-white text-xs rounded shadow-lg z-50 ${toast.ok ? 'bg-green-700' : 'bg-red-700'}`}>
+          {toast.msg}
         </div>
       )}
     </div>
