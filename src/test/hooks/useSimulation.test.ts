@@ -6,6 +6,7 @@ import { Circuit, CircuitComponent, Pin, Wire } from '../../types/circuit'
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 let _id = 1
+beforeEach(() => { _id = 1 })
 function uid() { return `t${_id++}` }
 
 function makePin(name: string, type: 'input' | 'output', signal: 0 | 1 = 0): Pin {
