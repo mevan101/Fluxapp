@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Zap, Play, Pause, SkipForward, Save, FolderOpen, Download, Trash2, RotateCcw } from 'lucide-react'
+import { Zap, Play, Pause, SkipForward, Save, FolderOpen, Download, RotateCcw, ChevronDown } from 'lucide-react'
 import Badge from '../ui/Badge'
 import { Circuit } from '../../types/circuit'
+import { downloadCircuitSvg, downloadCircuitJson } from '../../utils/export'
 
 interface ToolbarProps {
   circuitName: string
@@ -45,6 +46,8 @@ export default function Toolbar({
     setTimeout(() => setToast(null), 2500)
   }
 
+  const [exportOpen, setExportOpen] = useState(false)
+
   function handleSave() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...circuit, name: circuitName }))
@@ -67,20 +70,24 @@ export default function Toolbar({
     }
   }
 
-  function handleExport() {
+  function handleExportJson() {
     try {
-      const data = JSON.stringify({ ...circuit, name: circuitName }, null, 2)
-      const blob = new Blob([data], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${circuitName.replace(/\s+/g, '_')}.json`
-      a.click()
-      URL.revokeObjectURL(url)
-      showToast('Exported!')
+      downloadCircuitJson(circuit, circuitName)
+      showToast('Exported as JSON!')
     } catch {
       showToast('Export failed', false)
     }
+    setExportOpen(false)
+  }
+
+  function handleExportSvg() {
+    try {
+      downloadCircuitSvg(circuit, circuitName)
+      showToast('Exported as SVG!')
+    } catch {
+      showToast('Export failed', false)
+    }
+    setExportOpen(false)
   }
 
   const SPEEDS = [0.5, 1, 2, 4]
@@ -195,14 +202,36 @@ export default function Toolbar({
           <FolderOpen className="w-3.5 h-3.5" />
           Load
         </button>
-        <button
-          onClick={handleExport}
-          className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
-          title="Export circuit as JSON file"
-        >
-          <Download className="w-3.5 h-3.5" />
-          Export
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setExportOpen(o => !o)}
+            className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+            title="Export circuit"
+          >
+            <Download className="w-3.5 h-3.5" />
+            Export
+            <ChevronDown className="w-3 h-3" />
+          </button>
+          {exportOpen && (
+            <div
+              className="absolute right-0 top-full mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 min-w-[140px] overflow-hidden"
+              onMouseLeave={() => setExportOpen(false)}
+            >
+              <button
+                onClick={handleExportSvg}
+                className="w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-white transition-colors flex items-center gap-2"
+              >
+                <span className="text-signal font-mono">SVG</span> Export as SVG
+              </button>
+              <button
+                onClick={handleExportJson}
+                className="w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-white transition-colors flex items-center gap-2"
+              >
+                <span className="text-purple-400 font-mono">JSON</span> Export as JSON
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {toast && (

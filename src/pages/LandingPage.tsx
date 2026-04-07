@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import {
   Zap, Brain, Check, X, Star, ArrowRight, Cpu, BookOpen,
-  Globe, Moon, Download, GitFork,
+  Globe, Moon, Download, GitFork, Trophy,
 } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
@@ -57,32 +57,42 @@ const FEATURES: Feature[] = [
   },
   {
     icon: <Download className="w-8 h-8 text-orange-400" />,
-    title: 'Export Anywhere',
-    desc: 'Export your circuits as SVG, PNG, or JSON. Share with a link or embed in docs. Your work, your format.',
+    title: 'Export SVG & JSON',
+    desc: 'Export your circuits as a beautiful SVG diagram or portable JSON. Share links or embed in docs — your work, your format.',
     badge: 'Portable',
     color: 'orange',
   },
+  {
+    icon: <Trophy className="w-8 h-8 text-yellow-400" />,
+    title: 'Gamification & XP',
+    desc: 'Earn XP, unlock achievements, climb the leaderboard, and tackle daily circuit challenges. Learning has never been this fun.',
+    badge: 'Unique',
+    color: 'yellow',
+  },
 ]
 
-// 8 platforms: Falstad, Logisim, CircuitJS, Tinkercad, EveryCircuit, EasyEDA, Multisim, KiCad
-// Keep table to FLUX + 5 columns for readability; list remaining two in prose
+// 8 platforms studied: Falstad, Logisim, CircuitJS, Tinkercad, EveryCircuit, EasyEDA, Multisim, KiCad
 const COMPARISON = [
-  { feature: 'Modern UI/UX',        flux: true,  falstad: false, logisim: false, tinkercad: true,  easyeda: true  },
-  { feature: 'No Account Required', flux: true,  falstad: true,  logisim: true,  tinkercad: false, easyeda: false },
-  { feature: '100% Free',           flux: true,  falstad: true,  logisim: true,  tinkercad: true,  easyeda: false },
-  { feature: 'Open Source',         flux: true,  falstad: true,  logisim: true,  tinkercad: false, easyeda: false },
-  { feature: 'Web-Based',           flux: true,  falstad: true,  logisim: false, tinkercad: true,  easyeda: true  },
-  { feature: 'Mobile-Responsive',   flux: true,  falstad: false, logisim: false, tinkercad: true,  easyeda: true  },
-  { feature: 'Dark Mode',           flux: true,  falstad: false, logisim: false, tinkercad: false, easyeda: true  },
-  { feature: 'AI Tutor',            flux: true,  falstad: false, logisim: false, tinkercad: false, easyeda: false },
-  { feature: 'Logic Gates',         flux: true,  falstad: true,  logisim: true,  tinkercad: true,  easyeda: true  },
-  { feature: 'Flip-Flops',          flux: true,  falstad: true,  logisim: true,  tinkercad: false, easyeda: false },
-  { feature: 'Oscilloscope',        flux: true,  falstad: true,  logisim: false, tinkercad: false, easyeda: true  },
-  { feature: 'Community Gallery',   flux: true,  falstad: false, logisim: false, tinkercad: true,  easyeda: true  },
-  { feature: 'Classroom Tools',     flux: true,  falstad: false, logisim: false, tinkercad: true,  easyeda: false },
-  { feature: 'Export SVG / PNG',    flux: true,  falstad: true,  logisim: true,  tinkercad: true,  easyeda: true  },
-  { feature: 'Keyboard Shortcuts',  flux: true,  falstad: false, logisim: true,  tinkercad: false, easyeda: false },
-  { feature: 'Undo / Redo',         flux: true,  falstad: false, logisim: true,  tinkercad: true,  easyeda: true  },
+  // feature | FLUX | Falstad | Logisim | CircuitJS | Tinkercad | EveryCircuit | EasyEDA | Multisim | KiCad
+  { feature: 'Modern UI/UX',        flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: true,  everycircuit: true,  easyeda: true,  multisim: false, kicad: false },
+  { feature: 'No Account Required', flux: true,  falstad: true,  logisim: true,  circuitjs: true,  tinkercad: false, everycircuit: false, easyeda: false, multisim: false, kicad: true  },
+  { feature: '100% Free',           flux: true,  falstad: true,  logisim: true,  circuitjs: true,  tinkercad: true,  everycircuit: false, easyeda: false, multisim: false, kicad: true  },
+  { feature: 'Open Source',         flux: true,  falstad: true,  logisim: true,  circuitjs: true,  tinkercad: false, everycircuit: false, easyeda: false, multisim: false, kicad: true  },
+  { feature: 'Web-Based',           flux: true,  falstad: true,  logisim: false, circuitjs: true,  tinkercad: true,  everycircuit: false, easyeda: true,  multisim: false, kicad: false },
+  { feature: 'Mobile-Responsive',   flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: true,  everycircuit: true,  easyeda: true,  multisim: false, kicad: false },
+  { feature: 'Dark Mode',           flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: false, everycircuit: false, easyeda: true,  multisim: false, kicad: true  },
+  { feature: 'AI Tutor',            flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: false, everycircuit: false, easyeda: false, multisim: false, kicad: false },
+  { feature: 'Logic Gates',         flux: true,  falstad: true,  logisim: true,  circuitjs: true,  tinkercad: true,  everycircuit: true,  easyeda: true,  multisim: true,  kicad: false },
+  { feature: 'Flip-Flops',          flux: true,  falstad: true,  logisim: true,  circuitjs: true,  tinkercad: false, everycircuit: true,  easyeda: false, multisim: true,  kicad: false },
+  { feature: 'Oscilloscope',        flux: true,  falstad: true,  logisim: false, circuitjs: true,  tinkercad: false, everycircuit: true,  easyeda: true,  multisim: true,  kicad: false },
+  { feature: 'Community Gallery',   flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: true,  everycircuit: false, easyeda: true,  multisim: false, kicad: true  },
+  { feature: 'Classroom Tools',     flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: true,  everycircuit: false, easyeda: false, multisim: true,  kicad: false },
+  { feature: 'Export SVG & JSON',   flux: true,  falstad: false, logisim: true,  circuitjs: false, tinkercad: true,  everycircuit: false, easyeda: true,  multisim: true,  kicad: true  },
+  { feature: 'Keyboard Shortcuts',  flux: true,  falstad: false, logisim: true,  circuitjs: false, tinkercad: false, everycircuit: false, easyeda: false, multisim: true,  kicad: true  },
+  { feature: 'Undo / Redo',         flux: true,  falstad: false, logisim: true,  circuitjs: false, tinkercad: true,  everycircuit: false, easyeda: true,  multisim: true,  kicad: true  },
+  { feature: 'Gamification / XP',   flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: false, everycircuit: false, easyeda: false, multisim: false, kicad: false },
+  { feature: 'Structured Learning', flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: true,  everycircuit: false, easyeda: false, multisim: false, kicad: false },
+  { feature: 'Daily Challenges',    flux: true,  falstad: false, logisim: false, circuitjs: false, tinkercad: false, everycircuit: false, easyeda: false, multisim: false, kicad: false },
 ]
 
 const PLATFORMS = [
@@ -175,7 +185,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
             {[
-              { label: '60+ Components', sub: 'gates, flops & more' },
+              { label: '19/19 Features', sub: 'vs 8 competitors' },
               { label: 'AI-Powered',     sub: 'smart tutor built-in' },
               { label: 'Real-time Sim',  sub: 'instant propagation' },
               { label: 'MIT Licensed',   sub: 'fork it, own it' },
@@ -215,25 +225,27 @@ export default function LandingPage() {
 
       {/* ── Comparison ───────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-gray-950/50">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">How FLUX Stacks Up</h2>
             <p className="text-gray-400">
-              We studied 8 leading platforms to build something better than all of them combined.
+              We studied all 8 leading platforms to build something better than all of them combined.
             </p>
           </div>
           <div className="overflow-x-auto rounded-xl border border-gray-800">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" style={{ minWidth: 860 }}>
               <thead>
                 <tr className="border-b border-gray-800 bg-gray-900/80">
-                  <th className="text-left p-4 text-gray-300 font-semibold min-w-[180px]">Feature</th>
-                  <th className="p-4 text-signal font-bold text-center whitespace-nowrap">
-                    ⚡ FLUX
-                  </th>
-                  <th className="p-4 text-gray-400 font-semibold text-center whitespace-nowrap">Falstad</th>
-                  <th className="p-4 text-gray-400 font-semibold text-center whitespace-nowrap">Logisim</th>
-                  <th className="p-4 text-gray-400 font-semibold text-center whitespace-nowrap">Tinkercad</th>
-                  <th className="p-4 text-gray-400 font-semibold text-center whitespace-nowrap">EasyEDA</th>
+                  <th className="text-left p-4 text-gray-300 font-semibold min-w-[170px]">Feature</th>
+                  <th className="p-3 text-signal font-bold text-center whitespace-nowrap">⚡ FLUX</th>
+                  <th className="p-3 text-gray-400 font-semibold text-center whitespace-nowrap text-xs">Falstad</th>
+                  <th className="p-3 text-gray-400 font-semibold text-center whitespace-nowrap text-xs">Logisim</th>
+                  <th className="p-3 text-gray-400 font-semibold text-center whitespace-nowrap text-xs">CircuitJS</th>
+                  <th className="p-3 text-gray-400 font-semibold text-center whitespace-nowrap text-xs">Tinkercad</th>
+                  <th className="p-3 text-gray-400 font-semibold text-center whitespace-nowrap text-xs">EveryCircuit</th>
+                  <th className="p-3 text-gray-400 font-semibold text-center whitespace-nowrap text-xs">EasyEDA</th>
+                  <th className="p-3 text-gray-400 font-semibold text-center whitespace-nowrap text-xs">Multisim</th>
+                  <th className="p-3 text-gray-400 font-semibold text-center whitespace-nowrap text-xs">KiCad</th>
                 </tr>
               </thead>
               <tbody>
@@ -242,22 +254,53 @@ export default function LandingPage() {
                     key={row.feature}
                     className={`border-b border-gray-800/50 ${i % 2 === 0 ? 'bg-gray-900/20' : ''}`}
                   >
-                    <td className="p-4 text-gray-300 font-medium">{row.feature}</td>
-                    {[row.flux, row.falstad, row.logisim, row.tinkercad, row.easyeda].map((v, j) => (
-                      <td key={j} className="p-4 text-center">
+                    <td className="p-4 text-gray-300 font-medium text-sm">{row.feature}</td>
+                    {[row.flux, row.falstad, row.logisim, row.circuitjs, row.tinkercad, row.everycircuit, row.easyeda, row.multisim, row.kicad].map((v, j) => (
+                      <td key={j} className="p-3 text-center">
                         {v
-                          ? <Check className="w-5 h-5 text-green-400 mx-auto" />
-                          : <X className="w-5 h-5 text-gray-700 mx-auto" />}
+                          ? <Check className="w-4 h-4 text-green-400 mx-auto" />
+                          : <X className="w-4 h-4 text-gray-700 mx-auto" />}
                       </td>
                     ))}
                   </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr className="bg-gray-900/60 border-t-2 border-gray-700">
+                  <td className="p-4 text-gray-400 font-semibold text-sm">Score (out of {COMPARISON.length})</td>
+                  {[
+                    { label: 'FLUX', score: COMPARISON.filter(r => r.flux).length, highlight: true },
+                    { label: 'Falstad',      score: COMPARISON.filter(r => r.falstad).length,      highlight: false },
+                    { label: 'Logisim',      score: COMPARISON.filter(r => r.logisim).length,      highlight: false },
+                    { label: 'CircuitJS',    score: COMPARISON.filter(r => r.circuitjs).length,    highlight: false },
+                    { label: 'Tinkercad',    score: COMPARISON.filter(r => r.tinkercad).length,    highlight: false },
+                    { label: 'EveryCircuit', score: COMPARISON.filter(r => r.everycircuit).length, highlight: false },
+                    { label: 'EasyEDA',      score: COMPARISON.filter(r => r.easyeda).length,      highlight: false },
+                    { label: 'Multisim',     score: COMPARISON.filter(r => r.multisim).length,     highlight: false },
+                    { label: 'KiCad',        score: COMPARISON.filter(r => r.kicad).length,        highlight: false },
+                  ].map(({ score, highlight, label }) => (
+                    <td key={label} className="p-3 text-center">
+                      <span className={`font-bold font-mono text-sm ${highlight ? 'text-signal text-base' : 'text-gray-500'}`}>
+                        {score}
+                      </span>
+                    </td>
+                  ))}
+                </tr>
+              </tfoot>
             </table>
           </div>
-          <p className="text-center text-xs text-gray-600 mt-4">
-            * Also studied: CircuitJS, EveryCircuit, Multisim, KiCad — see "Inspired by" section below.
-          </p>
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-gray-600">
+              Data reflects publicly available feature sets as of 2025. Some platforms have partial implementations.
+            </p>
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
+              style={{ background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.25)' }}
+            >
+              <Check className="w-4 h-4 text-signal" />
+              <span className="text-signal">FLUX leads with {COMPARISON.length}/{COMPARISON.length} features</span>
+            </div>
+          </div>
         </div>
       </section>
 
