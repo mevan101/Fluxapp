@@ -17,7 +17,7 @@ export default function GitHubStarButton({ size = 'sm' }: { size?: 'sm' | 'md' }
       .then(d => {
         if (typeof d.stargazers_count === 'number') setStars(d.stargazers_count)
       })
-      .catch(() => {})
+      .catch(() => { /* GitHub API unavailable — star count stays hidden */ })
   }, [])
 
   const isMd = size === 'md'

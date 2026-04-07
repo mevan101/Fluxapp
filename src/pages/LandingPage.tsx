@@ -1,14 +1,25 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Zap, Brain, Users, Check, X, Star, ArrowRight, Cpu, BookOpen,
-  Globe, Layers, Moon, Download, Keyboard, RotateCcw, GitFork,
+  Zap, Brain, Check, X, Star, ArrowRight, Cpu, BookOpen,
+  Globe, Moon, Download, GitFork,
 } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import GitHubStarButton from '../components/ui/GitHubStarButton'
 
-const FEATURES = [
+type BadgeColor = 'cyan' | 'purple' | 'green' | 'yellow' | 'red' | 'gray' | 'orange'
+
+interface Feature {
+  icon: React.ReactNode
+  title: string
+  desc: string
+  badge: string
+  color: BadgeColor
+}
+
+const FEATURES: Feature[] = [
   {
     icon: <Cpu className="w-8 h-8 text-signal" />,
     title: 'Visual Circuit Builder',
@@ -146,7 +157,7 @@ export default function LandingPage() {
             FLUX
           </h1>
           <p className="text-2xl md:text-3xl font-semibold text-white mb-4">
-            The Circuit &amp; Logic Simulator<br />the World Deserves
+            The Circuit & Logic Simulator<br />the World Deserves
           </p>
           <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">
             Design, simulate, and learn digital electronics with AI-powered guidance.
@@ -192,7 +203,7 @@ export default function LandingPage() {
               className="p-8 hover:border-gray-600 transition-colors"
             >
               <div className="mb-4">{f.icon}</div>
-              <Badge color={f.color as 'cyan' | 'purple' | 'green' | 'yellow' | 'orange'} className="mb-3">
+              <Badge color={f.color} className="mb-3">
                 {f.badge}
               </Badge>
               <h3 className="text-xl font-bold mb-3">{f.title}</h3>
@@ -236,7 +247,7 @@ export default function LandingPage() {
                       <td key={j} className="p-4 text-center">
                         {v
                           ? <Check className="w-5 h-5 text-green-400 mx-auto" />
-                          : <X    className="w-5 h-5 text-gray-700 mx-auto"  />}
+                          : <X className="w-5 h-5 text-gray-700 mx-auto" />}
                       </td>
                     ))}
                   </tr>
