@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0a0c10;
+  color: #e2e8f0;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+@keyframes flowSignal {
+  from { stroke-dashoffset: 20; }
+  to { stroke-dashoffset: 0; }
+}
+
+.signal-flow {
+  stroke-dasharray: 10 5;
+  animation: flowSignal 0.5s linear infinite;
+}
+
+@keyframes ledGlow {
+  0%, 100% { box-shadow: 0 0 8px #00d4ff, 0 0 16px #00d4ff; }
+  50% { box-shadow: 0 0 12px #00d4ff, 0 0 24px #00d4ff, 0 0 40px #00d4ff; }
+}
+
+.led-on {
+  animation: ledGlow 1s ease-in-out infinite;
+}
+
+@keyframes clockPulse {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.3; }
+}
+
+.clock-pulse {
+  animation: clockPulse 1s step-start infinite;
+}
