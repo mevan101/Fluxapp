@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Zap, Menu, X } from 'lucide-react'
+import GitHubStarButton from '../ui/GitHubStarButton'
 
 const LINKS = [
   { to: '/', label: 'Home' },
@@ -39,10 +40,7 @@ export default function Navigation() {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <span className="text-xs text-gray-500 font-mono">v0.1</span>
-          <button className="px-4 py-1.5 rounded-lg bg-signal text-black text-sm font-semibold hover:bg-cyan-300 transition-colors">
-            Sign In
-          </button>
+          <GitHubStarButton />
         </div>
 
         <button
@@ -69,9 +67,14 @@ export default function Navigation() {
               {l.label}
             </Link>
           ))}
-          <button className="mt-2 px-4 py-2 rounded-lg bg-signal text-black text-sm font-semibold">
-            Sign In
-          </button>
+          <a
+            href="https://github.com/mevan101/Fluxapp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-gray-200 text-sm font-semibold border border-gray-600"
+          >
+            ⭐ Star on GitHub
+          </a>
         </div>
       )}
     </nav>
