@@ -119,9 +119,35 @@ function ComponentBody({ component, selected }: { component: CircuitComponent; s
   }
 
   if (type === 'SEVEN_SEG') {
+    // Segments: A=top, B=top-right, C=bottom-right, D=bottom, E=bottom-left, F=top-left, G=middle
+    const pinNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+    const segs: Record<string, 0 | 1> = {}
+    for (const name of pinNames) {
+      const pin = component.pins.find(p => p.name === name)
+      segs[name] = pin?.signal ?? 0
+    }
+    const on = '#ff4500'
+    const off = '#2a1a0a'
+    const sw = 4 // stroke width
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center">
-        <span className="text-orange-400 text-sm font-mono font-bold">7-SEG</span>
+      <div className="w-full h-full flex flex-col items-center justify-center gap-0.5">
+        <svg width={32} height={52} viewBox="0 0 32 52">
+          {/* A - top */}
+          <line x1={6} y1={3} x2={26} y2={3} stroke={segs['A'] ? on : off} strokeWidth={sw} strokeLinecap="round" />
+          {/* F - top-left */}
+          <line x1={4} y1={5} x2={4} y2={23} stroke={segs['F'] ? on : off} strokeWidth={sw} strokeLinecap="round" />
+          {/* B - top-right */}
+          <line x1={28} y1={5} x2={28} y2={23} stroke={segs['B'] ? on : off} strokeWidth={sw} strokeLinecap="round" />
+          {/* G - middle */}
+          <line x1={6} y1={26} x2={26} y2={26} stroke={segs['G'] ? on : off} strokeWidth={sw} strokeLinecap="round" />
+          {/* E - bottom-left */}
+          <line x1={4} y1={28} x2={4} y2={46} stroke={segs['E'] ? on : off} strokeWidth={sw} strokeLinecap="round" />
+          {/* C - bottom-right */}
+          <line x1={28} y1={28} x2={28} y2={46} stroke={segs['C'] ? on : off} strokeWidth={sw} strokeLinecap="round" />
+          {/* D - bottom */}
+          <line x1={6} y1={49} x2={26} y2={49} stroke={segs['D'] ? on : off} strokeWidth={sw} strokeLinecap="round" />
+        </svg>
+        <span className="text-orange-400 text-xs font-mono" style={{ fontSize: 9 }}>7-SEG</span>
       </div>
     )
   }

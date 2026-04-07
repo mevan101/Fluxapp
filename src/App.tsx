@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import LandingPage from './pages/LandingPage'
 import SimulatorPage from './pages/SimulatorPage'
@@ -8,7 +8,7 @@ import DashboardPage from './pages/DashboardPage'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Layout><LandingPage /></Layout>} />
         <Route path="/simulator" element={<SimulatorPage />} />
@@ -16,6 +16,6 @@ export default function App() {
         <Route path="/classroom" element={<Layout><ClassroomPage /></Layout>} />
         <Route path="/dashboard" element={<Layout><DashboardPage /></Layout>} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }

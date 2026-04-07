@@ -56,14 +56,40 @@ function propagateSignals(circ: Circuit): Circuit {
           }
           break
         }
-        case 'D_FLIP_FLOP':
+        case 'D_FLIP_FLOP': {
+          const dPin = comp.pins.find(p => p.name === 'D')
+          const clkPin = comp.pins.find(p => p.name === 'CLK')
+          const prevClk = (comp.state.prevClk ?? 0) as number
+          const currClk = clkPin?.signal ?? 0
+          // Rising edge: clock went from 0 to 1
+          if (prevClk === 0 && currClk === 1 && dPin !== undefined) {
+            comp.state.q = dPin.signal
+          }
+          comp.state.prevClk = currClk
           if (outputPins[0]) outputPins[0].signal = ((comp.state.q ?? 0) as number) === 1 ? 1 : 0
           if (outputPins[1]) outputPins[1].signal = ((comp.state.q ?? 0) as number) === 1 ? 0 : 1
           break
-        case 'JK_FLIP_FLOP':
+        }
+        case 'JK_FLIP_FLOP': {
+          const jPin = comp.pins.find(p => p.name === 'J')
+          const kPin = comp.pins.find(p => p.name === 'K')
+          const clkPin = comp.pins.find(p => p.name === 'CLK')
+          const prevClk = (comp.state.prevClk ?? 0) as number
+          const currClk = clkPin?.signal ?? 0
+          // Rising edge
+          if (prevClk === 0 && currClk === 1 && jPin !== undefined && kPin !== undefined) {
+            const j = jPin.signal, k = kPin.signal
+            const q = (comp.state.q ?? 0) as number
+            if (j === 0 && k === 0) { /* hold */ }
+            else if (j === 0 && k === 1) comp.state.q = 0
+            else if (j === 1 && k === 0) comp.state.q = 1
+            else comp.state.q = q === 1 ? 0 : 1 // toggle
+          }
+          comp.state.prevClk = currClk
           if (outputPins[0]) outputPins[0].signal = ((comp.state.q ?? 0) as number) === 1 ? 1 : 0
           if (outputPins[1]) outputPins[1].signal = ((comp.state.q ?? 0) as number) === 1 ? 0 : 1
           break
+        }
         case 'HALF_ADDER': {
           const aPin = comp.pins.find(p => p.name === 'A')
           const bPin = comp.pins.find(p => p.name === 'B')

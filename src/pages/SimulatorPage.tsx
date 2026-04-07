@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { CircuitComponent, Pin, ComponentType } from '../types/circuit'
+import { CircuitComponent, Pin, ComponentType, Circuit } from '../types/circuit'
 import { AND_GATE_DEMO } from '../data/sampleCircuits'
 import { useSimulation } from '../hooks/useSimulation'
 import { useCanvas } from '../hooks/useCanvas'
@@ -9,6 +9,21 @@ import ComponentPanel from '../components/simulator/ComponentPanel'
 import SimulatorCanvas from '../components/simulator/SimulatorCanvas'
 import AITutorPanel from '../components/simulator/AITutorPanel'
 import OscilloscopePanel from '../components/simulator/OscilloscopePanel'
+
+const STORAGE_KEY = 'flux-saved-circuit'
+
+function getInitialCircuit(): Circuit {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const c = JSON.parse(raw) as Circuit
+      // Clear it so next visit starts fresh unless saved again
+      localStorage.removeItem(STORAGE_KEY)
+      return c
+    }
+  } catch { /* ignore */ }
+  return AND_GATE_DEMO
+}
 
 export default function SimulatorPage() {
   const {
@@ -27,7 +42,7 @@ export default function SimulatorPage() {
     stopSimulation,
     stepSimulation,
     undo,
-  } = useSimulation(AND_GATE_DEMO)
+  } = useSimulation(getInitialCircuit())
 
   const { viewport, canvasRef, screenToWorld } = useCanvas()
   const { wiringState, beginWire, endWire, cancelWire, updateMousePos } = useWiring()
@@ -127,11 +142,14 @@ export default function SimulatorPage() {
         speed={speed}
         componentCount={circuit.components.length}
         wireCount={circuit.wires.length}
+        circuit={circuit}
         onNameChange={setCircuitName}
         onPlay={startSimulation}
         onPause={stopSimulation}
         onStep={stepSimulation}
         onSpeedChange={setSpeed}
+        onLoadCircuit={setCircuit}
+        onUndo={undo}
       />
 
       <div className="flex flex-1 min-h-0">
