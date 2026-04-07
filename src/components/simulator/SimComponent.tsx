@@ -1,5 +1,9 @@
 import { CircuitComponent, Pin } from '../../types/circuit'
 
+const SEVEN_SEG_ON_COLOR = '#ff4500'
+const SEVEN_SEG_OFF_COLOR = '#2a1a0a'
+const SEVEN_SEG_STROKE_WIDTH = 4
+
 interface SimComponentProps {
   component: CircuitComponent
   selected: boolean
@@ -126,9 +130,9 @@ function ComponentBody({ component, selected }: { component: CircuitComponent; s
       const pin = component.pins.find(p => p.name === name)
       segs[name] = pin?.signal ?? 0
     }
-    const on = '#ff4500'
-    const off = '#2a1a0a'
-    const sw = 4 // stroke width
+    const on = SEVEN_SEG_ON_COLOR
+    const off = SEVEN_SEG_OFF_COLOR
+    const sw = SEVEN_SEG_STROKE_WIDTH
     return (
       <div className="w-full h-full flex flex-col items-center justify-center gap-0.5">
         <svg width={32} height={52} viewBox="0 0 32 52">
