@@ -1,8 +1,12 @@
 export type ComponentType =
   | 'AND' | 'OR' | 'NOT' | 'XOR' | 'NAND' | 'NOR'
-  | 'D_FLIP_FLOP' | 'JK_FLIP_FLOP' | 'MUX'
+  | 'XNOR' | 'BUFFER'
+  | 'AND3' | 'OR3' | 'NAND3' | 'NOR3' | 'XOR3'
+  | 'D_FLIP_FLOP' | 'JK_FLIP_FLOP' | 'T_FLIP_FLOP' | 'SR_LATCH' | 'MUX'
+  | 'DECODER_2_4' | 'DEMUX'
   | 'LED' | 'SWITCH' | 'CLOCK' | 'VCC' | 'GND'
-  | 'SEVEN_SEG' | 'HALF_ADDER' | 'FULL_ADDER'
+  | 'PROBE' | 'BUZZER' | 'TEXT_LABEL'
+  | 'SEVEN_SEG' | 'HALF_ADDER' | 'FULL_ADDER' | 'BREADBOARD'
 
 export interface Pin {
   id: string

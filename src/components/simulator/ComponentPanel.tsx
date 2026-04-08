@@ -18,25 +18,31 @@ const CATEGORIES = [
     label: 'Logic Gates',
     color: 'text-cyan-400',
     bg: 'bg-cyan-900/30',
-    types: ['AND', 'OR', 'NOT', 'XOR', 'NAND', 'NOR'] as ComponentType[],
+    types: ['AND', 'OR', 'NOT', 'XOR', 'NAND', 'NOR', 'XNOR', 'BUFFER'] as ComponentType[],
+  },
+  {
+    label: '3-Input Gates',
+    color: 'text-cyan-300',
+    bg: 'bg-cyan-900/20',
+    types: ['AND3', 'OR3', 'NAND3', 'NOR3', 'XOR3'] as ComponentType[],
   },
   {
     label: 'Memory',
     color: 'text-purple-400',
     bg: 'bg-purple-900/30',
-    types: ['D_FLIP_FLOP', 'JK_FLIP_FLOP'] as ComponentType[],
+    types: ['D_FLIP_FLOP', 'JK_FLIP_FLOP', 'T_FLIP_FLOP', 'SR_LATCH'] as ComponentType[],
   },
   {
     label: 'I/O',
     color: 'text-green-400',
     bg: 'bg-green-900/30',
-    types: ['LED', 'SWITCH', 'CLOCK'] as ComponentType[],
+    types: ['LED', 'SWITCH', 'CLOCK', 'PROBE', 'BUZZER', 'TEXT_LABEL'] as ComponentType[],
   },
   {
     label: 'Complex',
     color: 'text-orange-400',
     bg: 'bg-orange-900/30',
-    types: ['MUX', 'HALF_ADDER', 'FULL_ADDER', 'SEVEN_SEG'] as ComponentType[],
+    types: ['MUX', 'DEMUX', 'DECODER_2_4', 'HALF_ADDER', 'FULL_ADDER', 'SEVEN_SEG', 'BREADBOARD'] as ComponentType[],
   },
 ]
 
@@ -88,12 +94,17 @@ export default function ComponentPanel({ onSelectComponent }: ComponentPanelProp
                   return (
                     <button
                       key={type}
-                      className={`w-full text-left px-3 py-1.5 text-xs text-gray-300 hover:text-white hover:${cat.bg} hover:bg-gray-800 transition-colors flex items-center gap-2`}
+                      draggable
+                      onDragStart={e => {
+                        e.dataTransfer.setData('application/x-component-type', type)
+                        e.dataTransfer.effectAllowed = 'copy'
+                      }}
+                      className={`w-full text-left px-3 py-1.5 text-xs text-gray-300 hover:text-white hover:${cat.bg} hover:bg-gray-800 transition-colors flex items-center gap-2 cursor-grab active:cursor-grabbing`}
                       onClick={() => onSelectComponent(type)}
-                      title={`Click to place ${tmpl.label}`}
+                      title={`Click or drag to place ${tmpl.label}`}
                     >
                       <span className={`font-mono text-xs px-1.5 py-0.5 rounded ${cat.bg} ${cat.color} border border-current/30`}>
-                        {type.length > 4 ? type.slice(0, 4) : type}
+                        {type.length > 5 ? type.slice(0, 5) : type}
                       </span>
                       <span className="truncate">{tmpl.label}</span>
                     </button>
@@ -106,7 +117,7 @@ export default function ComponentPanel({ onSelectComponent }: ComponentPanelProp
       </div>
 
       <div className="p-2 border-t border-gray-800 text-xs text-gray-600 text-center">
-        Click to place
+        Click or drag to place
       </div>
     </div>
   )

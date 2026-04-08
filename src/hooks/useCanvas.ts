@@ -68,15 +68,15 @@ export function useCanvas() {
   }, [])
 
   useEffect(() => {
-    // Use Alt key (not Space) for pan to avoid conflict with Space = play/pause
+    // Space key for pan (like Figma/Sketch)
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'AltLeft' || e.code === 'AltRight') {
+      if (e.code === 'Space' && (document.activeElement?.tagName !== 'INPUT')) {
         spaceHeld.current = true
         if (canvasRef.current) canvasRef.current.style.cursor = 'grab'
       }
     }
     const onKeyUp = (e: KeyboardEvent) => {
-      if (e.code === 'AltLeft' || e.code === 'AltRight') {
+      if (e.code === 'Space') {
         spaceHeld.current = false
         if (canvasRef.current) canvasRef.current.style.cursor = 'default'
       }
@@ -104,5 +104,5 @@ export function useCanvas() {
     }
   }, [handleWheel, handleMouseDown, handleMouseMove, handleMouseUp])
 
-  return { viewport, setViewport, canvasRef, worldToScreen, screenToWorld }
+  return { viewport, setViewport, canvasRef, worldToScreen, screenToWorld, spaceHeld }
 }

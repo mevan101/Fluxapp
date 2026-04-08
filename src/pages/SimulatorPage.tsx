@@ -4,6 +4,7 @@ import { AND_GATE_DEMO } from '../data/sampleCircuits'
 import { useSimulation } from '../hooks/useSimulation'
 import { useCanvas } from '../hooks/useCanvas'
 import { useWiring } from '../hooks/useWiring'
+import { createComponent } from '../data/components'
 import Toolbar from '../components/simulator/Toolbar'
 import ComponentPanel from '../components/simulator/ComponentPanel'
 import SimulatorCanvas from '../components/simulator/SimulatorCanvas'
@@ -17,7 +18,6 @@ function getInitialCircuit(): Circuit {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
       const c = JSON.parse(raw) as Circuit
-      // Clear it so next visit starts fresh unless saved again
       localStorage.removeItem(STORAGE_KEY)
       return c
     }
@@ -44,14 +44,14 @@ export default function SimulatorPage() {
     undo,
   } = useSimulation(getInitialCircuit())
 
-  const { viewport, canvasRef, screenToWorld } = useCanvas()
+  const { viewport, setViewport, canvasRef, screenToWorld, spaceHeld } = useCanvas()
   const { wiringState, beginWire, endWire, cancelWire, updateMousePos } = useWiring()
 
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [placingComponent, setPlacingComponent] = useState<ComponentType | null>(null)
   const [circuitName, setCircuitName] = useState(AND_GATE_DEMO.name)
+  const [lightMode, setLightMode] = useState(false)
 
-  // Wire history for oscilloscope
   const wireHistoryRef = useRef<Record<string, (0 | 1)[]>>({})
 
   useEffect(() => {
@@ -65,7 +65,6 @@ export default function SimulatorPage() {
 
   const handlePinClick = useCallback((comp: CircuitComponent, pin: Pin, e: React.MouseEvent) => {
     e.stopPropagation()
-
     const pinWorldX = comp.x + pin.position.x
     const pinWorldY = comp.y + pin.position.y
 
@@ -80,7 +79,6 @@ export default function SimulatorPage() {
           addWire,
         )
       } else {
-        // Clicked another output — restart wiring from this pin
         cancelWire()
         beginWire({ componentId: comp.id, pinId: pin.id, pinType: 'output', worldX: pinWorldX, worldY: pinWorldY })
       }
@@ -96,6 +94,43 @@ export default function SimulatorPage() {
     if (confirm('Delete this wire?')) removeWire(wireId)
   }, [removeWire])
 
+  const handleDeleteComponent = useCallback((id: string) => {
+    removeComponent(id)
+    if (selectedId === id) setSelectedId(null)
+  }, [removeComponent, selectedId])
+
+  const handleDuplicateComponent = useCallback((id: string) => {
+    const comp = circuit.components.find(c => c.id === id)
+    if (!comp) return
+    addComponent(comp.type, comp.x + 40, comp.y + 40)
+  }, [circuit.components, addComponent])
+
+  const handleRenameComponent = useCallback((id: string) => {
+    const comp = circuit.components.find(c => c.id === id)
+    if (!comp) return
+    const newLabel = prompt('Rename component:', comp.label)
+    if (newLabel !== null && newLabel.trim()) {
+      setCircuit(prev => ({
+        ...prev,
+        components: prev.components.map(c => c.id === id ? { ...c, label: newLabel.trim() } : c),
+      }))
+    }
+  }, [circuit.components, setCircuit])
+
+  const handleLabelChange = useCallback((id: string, newLabel: string) => {
+    setCircuit(prev => ({
+      ...prev,
+      components: prev.components.map(c => c.id === id ? { ...c, label: newLabel } : c),
+    }))
+  }, [setCircuit])
+
+  const handleClear = useCallback(() => {
+    setCircuit(prev => ({ ...prev, components: [], wires: [] }))
+    setSelectedId(null)
+    setPlacingComponent(null)
+    cancelWire()
+  }, [setCircuit, cancelWire])
+
   // Keyboard shortcuts
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -110,18 +145,14 @@ export default function SimulatorPage() {
           setSelectedId(null)
         }
       }
-      if (e.code === 'Space' && document.activeElement?.tagName !== 'INPUT') {
-        e.preventDefault()
-        if (isRunning) stopSimulation()
-        else startSimulation()
-      }
+      // Space is now used for pan in useCanvas — do NOT handle it here
       if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
         undo()
       }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [cancelWire, selectedId, removeComponent, isRunning, startSimulation, stopSimulation, undo])
+  }, [cancelWire, selectedId, removeComponent, undo])
 
   const handleCanvasMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (wiringState.active) {
@@ -133,7 +164,7 @@ export default function SimulatorPage() {
 
   return (
     <div
-      className="flex flex-col bg-canvas"
+      className={`flex flex-col ${lightMode ? 'bg-gray-100' : 'bg-canvas'}`}
       style={{ height: '100vh', overflow: 'hidden' }}
     >
       <Toolbar
@@ -143,6 +174,11 @@ export default function SimulatorPage() {
         componentCount={circuit.components.length}
         wireCount={circuit.wires.length}
         circuit={circuit}
+        viewport={viewport}
+        setViewport={setViewport}
+        canvasRef={canvasRef as React.RefObject<HTMLDivElement>}
+        wiringState={wiringState}
+        lightMode={lightMode}
         onNameChange={setCircuitName}
         onPlay={startSimulation}
         onPause={stopSimulation}
@@ -150,6 +186,9 @@ export default function SimulatorPage() {
         onSpeedChange={setSpeed}
         onLoadCircuit={setCircuit}
         onUndo={undo}
+        onClear={handleClear}
+        onCancelWire={cancelWire}
+        onToggleLightMode={() => setLightMode(m => !m)}
       />
 
       <div className="flex flex-1 min-h-0">
@@ -172,7 +211,13 @@ export default function SimulatorPage() {
             onPlaceComponent={handlePlaceComponent}
             onMoveComponent={moveComponent}
             onWireClick={handleWireClick}
+            onCancelWire={cancelWire}
+            onDeleteComponent={handleDeleteComponent}
+            onDuplicateComponent={handleDuplicateComponent}
+            onRenameComponent={handleRenameComponent}
+            onLabelChange={handleLabelChange}
             screenToWorld={screenToWorld}
+            lightMode={lightMode}
           />
 
           <OscilloscopePanel
