@@ -389,7 +389,7 @@ export default function Toolbar({
             <div className="space-y-2">
               {SHORTCUTS.map(s => (
                 <div key={s.key} className="flex items-start gap-4">
-                  <kbd className="bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs font-mono text-signal whitespace-nowrap min-w-[180px]">{s.key}</kbd>
+                  <kbd className="bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs font-mono text-signal whitespace-nowrap shrink-0 w-44">{s.key}</kbd>
                   <span className="text-xs text-gray-300">{s.desc}</span>
                 </div>
               ))}

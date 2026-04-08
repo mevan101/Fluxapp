@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { CircuitComponent, Pin } from '../../types/circuit'
+import { CircuitComponent, Pin, ComponentType } from '../../types/circuit'
 
 const SEVEN_SEG_ON_COLOR = '#ff4500'
 const SEVEN_SEG_OFF_COLOR = '#2a1a0a'
 const SEVEN_SEG_STROKE_WIDTH = 4
+
+/** Component types that use a dummy placeholder pin (no real pins rendered) */
+const DUMMY_PIN_TYPES = new Set<ComponentType>(['TEXT_LABEL', 'BREADBOARD'])
+/** Pin name used as placeholder for no-pin components */
+const DUMMY_PIN_NAME = 'dummy'
 
 interface SimComponentProps {
   component: CircuitComponent
@@ -208,8 +213,8 @@ function PinDot({ pin, component, onPinClick, lightMode }: {
 }) {
   const isOutput = pin.type === 'output'
   const active = pin.signal === 1
-  // Hide dummy pins for TEXT_LABEL and BREADBOARD
-  if ((component.type === 'TEXT_LABEL' || component.type === 'BREADBOARD') && pin.name === '_') return null
+  // Hide dummy pins for components that have no real pins
+  if (DUMMY_PIN_TYPES.has(component.type) && pin.name === DUMMY_PIN_NAME) return null
   return (
     <div style={{ position: 'absolute', left: pin.position.x, top: pin.position.y - 5, pointerEvents: 'none' }}>
       {/* Pin label */}

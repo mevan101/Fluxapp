@@ -263,13 +263,13 @@ export const COMPONENT_TEMPLATES: Record<ComponentType, ComponentTemplate> = {
   TEXT_LABEL: {
     type: 'TEXT_LABEL', label: 'Label', width: 100, height: 40, category: 'io',
     pins: makePins([
-      { name: '_', type: 'input', position: { x: 0, y: 20 } },
+      { name: 'dummy', type: 'input', position: { x: 0, y: 20 } },
     ]),
   },
   BREADBOARD: {
     type: 'BREADBOARD', label: 'Breadboard', width: 340, height: 340, category: 'complex',
     pins: makePins([
-      { name: '_', type: 'input', position: { x: 0, y: 170 } },
+      { name: 'dummy', type: 'input', position: { x: 0, y: 170 } },
     ]),
   },
 }
