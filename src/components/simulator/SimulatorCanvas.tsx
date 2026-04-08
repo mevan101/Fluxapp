@@ -4,7 +4,7 @@ import { Viewport } from '../../hooks/useCanvas'
 import { WiringState } from '../../hooks/useWiring'
 import SimComponent from './SimComponent'
 import WireLayer from './WireLayer'
-import { createComponent, COMPONENT_TEMPLATES } from '../../data/components'
+import { COMPONENT_TEMPLATES } from '../../data/components'
 
 interface SimulatorCanvasProps {
   circuit: Circuit
@@ -74,9 +74,8 @@ export default function SimulatorCanvas({
   }, [])
 
   const handleCanvasClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target !== e.currentTarget && !(e.target as HTMLElement).classList.contains('canvas-bg')) {
-      return
-    }
+    // SimComponent calls e.stopPropagation() on click, so any event that reaches
+    // the outer canvas div is from empty space — safe to handle here
     if (placingComponent) {
       const rect = e.currentTarget.getBoundingClientRect()
       const world = screenToWorld(e.clientX - rect.left, e.clientY - rect.top, viewport)
@@ -87,12 +86,12 @@ export default function SimulatorCanvas({
   }, [placingComponent, screenToWorld, viewport, onPlaceComponent, onSelectComponent])
 
   const handleCanvasContextMenu = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    // Only act on direct canvas clicks (not component right-clicks)
-    if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('canvas-bg')) {
-      if (wiringState.active) {
-        e.preventDefault()
-        onCancelWire?.()
-      }
+    // Cancel wiring on right-click anywhere on canvas
+    // SimComponent calls e.stopPropagation() on contextMenu so component right-clicks
+    // won't reach here
+    if (wiringState.active) {
+      e.preventDefault()
+      onCancelWire?.()
     }
   }, [wiringState.active, onCancelWire])
 
@@ -166,6 +165,60 @@ export default function SimulatorCanvas({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
+      {/* Empty canvas hint overlay */}
+      {circuit.components.length === 0 && !placingComponent && (
+        <div
+          style={{
+            position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 10,
+          }}
+        >
+          <div style={{
+            textAlign: 'center', padding: '32px 40px',
+            background: 'rgba(10,12,16,0.7)', borderRadius: 16,
+            border: '1px solid rgba(0,212,255,0.15)',
+            backdropFilter: 'blur(8px)',
+          }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>⚡</div>
+            <div style={{ color: '#00d4ff', fontSize: 18, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', marginBottom: 8 }}>
+              FLUX Circuit Simulator
+            </div>
+            <div style={{ color: '#6b7280', fontSize: 13, lineHeight: 1.7, maxWidth: 340 }}>
+              <div>📦 Drag or click a component from the left panel</div>
+              <div>🔗 Click an output pin → then an input pin to wire</div>
+              <div>▶️ Hit <span style={{ color: '#00d4ff' }}>Simulate</span> to see signals flow</div>
+              <div style={{ marginTop: 8 }}>Space + drag to pan &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; ? for shortcuts</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Active wiring hint */}
+      {wiringState.active && (
+        <div style={{
+          position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
+          background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)',
+          borderRadius: 8, padding: '6px 16px', pointerEvents: 'none', zIndex: 20,
+          color: '#fbbf24', fontSize: 12, fontFamily: 'JetBrains Mono, monospace',
+          backdropFilter: 'blur(8px)',
+        }}>
+          🔗 Wiring… click an <strong>input pin</strong> to connect &nbsp;·&nbsp; Right-click or Esc to cancel
+        </div>
+      )}
+
+      {/* Placement hint */}
+      {placingComponent && (
+        <div style={{
+          position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
+          background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.3)',
+          borderRadius: 8, padding: '6px 16px', pointerEvents: 'none', zIndex: 20,
+          color: '#00d4ff', fontSize: 12, fontFamily: 'JetBrains Mono, monospace',
+          backdropFilter: 'blur(8px)',
+        }}>
+          📦 Click to place <strong>{COMPONENT_TEMPLATES[placingComponent]?.label}</strong> &nbsp;·&nbsp; Esc to cancel
+        </div>
+      )}
+
       <div
         style={{
           transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,

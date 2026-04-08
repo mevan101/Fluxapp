@@ -42,9 +42,10 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 // SVG gate body for logic gates
-function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
+function GateSymbol({ type, w, h, lightMode }: { type: string; w: number; h: number; lightMode?: boolean }) {
   const cx = '#00d4ff'
-  const gray = '#4b5563'
+  const gray = lightMode ? '#6b7280' : '#4b5563'
+  const bodyFill = lightMode ? '#e8f4f8' : '#1e2a3a'
   const strokeW = 2
 
   if (type === 'AND' || type === 'NAND') {
@@ -55,7 +56,7 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
         {/* AND D-shape body */}
         <path
           d={`M ${bx},${by} L ${bx},${by + bh} L ${bx + bw * 0.5},${by + bh} Q ${bx + bw},${by + bh} ${bx + bw},${by + bh / 2} Q ${bx + bw},${by} ${bx + bw * 0.5},${by} Z`}
-          fill="#1e2a3a" stroke={cx} strokeWidth={strokeW}
+          fill={bodyFill} stroke={cx} strokeWidth={strokeW}
         />
         {/* input lines */}
         <line x1={0} y1={h * 0.25} x2={bx} y2={h * 0.25} stroke={gray} strokeWidth={1.5} />
@@ -64,7 +65,7 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
         {type === 'NAND' ? (
           <>
             <line x1={bx + bw} y1={h / 2} x2={w - bubbleR * 2 - 2} y2={h / 2} stroke={gray} strokeWidth={1.5} />
-            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />
+            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill={bodyFill} stroke={cx} strokeWidth={strokeW} />
           </>
         ) : (
           <line x1={bx + bw} y1={h / 2} x2={w} y2={h / 2} stroke={gray} strokeWidth={1.5} />
@@ -81,14 +82,14 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
       <svg width={w} height={h} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
         <path
           d={`M ${bx},${by} Q ${bx + bw * 0.5},${by} ${bx + bw},${by + bh / 2} Q ${bx + bw * 0.5},${by + bh} ${bx},${by + bh} Q ${bx + bw * 0.3},${by + bh / 2} ${bx},${by} Z`}
-          fill="#1e2a3a" stroke={cx} strokeWidth={strokeW}
+          fill={bodyFill} stroke={cx} strokeWidth={strokeW}
         />
         <line x1={0} y1={h * 0.25} x2={bx + 4} y2={h * 0.25} stroke={gray} strokeWidth={1.5} />
         <line x1={0} y1={h * 0.75} x2={bx + 4} y2={h * 0.75} stroke={gray} strokeWidth={1.5} />
         {type === 'NOR' ? (
           <>
             <line x1={bx + bw} y1={h / 2} x2={w - bubbleR * 2 - 2} y2={h / 2} stroke={gray} strokeWidth={1.5} />
-            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />
+            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill={bodyFill} stroke={cx} strokeWidth={strokeW} />
           </>
         ) : (
           <line x1={bx + bw} y1={h / 2} x2={w} y2={h / 2} stroke={gray} strokeWidth={1.5} />
@@ -108,14 +109,14 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
         {/* OR body */}
         <path
           d={`M ${bx},${by} Q ${bx + bw * 0.5},${by} ${bx + bw},${by + bh / 2} Q ${bx + bw * 0.5},${by + bh} ${bx},${by + bh} Q ${bx + bw * 0.3},${by + bh / 2} ${bx},${by} Z`}
-          fill="#1e2a3a" stroke={cx} strokeWidth={strokeW}
+          fill={bodyFill} stroke={cx} strokeWidth={strokeW}
         />
         <line x1={0} y1={h * 0.25} x2={bx + 4} y2={h * 0.25} stroke={gray} strokeWidth={1.5} />
         <line x1={0} y1={h * 0.75} x2={bx + 4} y2={h * 0.75} stroke={gray} strokeWidth={1.5} />
         {type === 'XNOR' ? (
           <>
             <line x1={bx + bw} y1={h / 2} x2={w - bubbleR * 2 - 2} y2={h / 2} stroke={gray} strokeWidth={1.5} />
-            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />
+            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill={bodyFill} stroke={cx} strokeWidth={strokeW} />
           </>
         ) : (
           <line x1={bx + bw} y1={h / 2} x2={w} y2={h / 2} stroke={gray} strokeWidth={1.5} />
@@ -129,8 +130,8 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
     const bubbleR = 4
     return (
       <svg width={w} height={h} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
-        <polygon points={`8,4 8,${h - 4} ${w - bubbleR * 2 - 6},${h / 2}`} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />
-        <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />
+        <polygon points={`8,4 8,${h - 4} ${w - bubbleR * 2 - 6},${h / 2}`} fill={bodyFill} stroke={cx} strokeWidth={strokeW} />
+        <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill={bodyFill} stroke={cx} strokeWidth={strokeW} />
         <line x1={0} y1={h / 2} x2={8} y2={h / 2} stroke={gray} strokeWidth={1.5} />
         <text x={12} y={h / 2 + 4} fill={cx} fontSize={9} fontFamily="monospace">NOT</text>
       </svg>
@@ -140,7 +141,7 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
   if (type === 'BUFFER') {
     return (
       <svg width={w} height={h} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
-        <polygon points={`8,4 8,${h - 4} ${w - 6},${h / 2}`} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />
+        <polygon points={`8,4 8,${h - 4} ${w - 6},${h / 2}`} fill={bodyFill} stroke={cx} strokeWidth={strokeW} />
         <line x1={0} y1={h / 2} x2={8} y2={h / 2} stroke={gray} strokeWidth={1.5} />
         <line x1={w - 6} y1={h / 2} x2={w} y2={h / 2} stroke={gray} strokeWidth={1.5} />
         <text x={12} y={h / 2 + 4} fill={cx} fontSize={9} fontFamily="monospace">BUF</text>
@@ -156,7 +157,7 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
       <svg width={w} height={h} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
         <path
           d={`M ${bx},${by} L ${bx},${by + bh} L ${bx + bw * 0.5},${by + bh} Q ${bx + bw},${by + bh} ${bx + bw},${by + bh / 2} Q ${bx + bw},${by} ${bx + bw * 0.5},${by} Z`}
-          fill="#1e2a3a" stroke={cx} strokeWidth={strokeW}
+          fill={bodyFill} stroke={cx} strokeWidth={strokeW}
         />
         <line x1={0} y1={h * 0.19} x2={bx} y2={h * 0.19} stroke={gray} strokeWidth={1.5} />
         <line x1={0} y1={h * 0.5} x2={bx} y2={h * 0.5} stroke={gray} strokeWidth={1.5} />
@@ -164,7 +165,7 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
         {type === 'NAND3' ? (
           <>
             <line x1={bx + bw} y1={h / 2} x2={w - bubbleR * 2 - 2} y2={h / 2} stroke={gray} strokeWidth={1.5} />
-            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />
+            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill={bodyFill} stroke={cx} strokeWidth={strokeW} />
           </>
         ) : (
           <line x1={bx + bw} y1={h / 2} x2={w} y2={h / 2} stroke={gray} strokeWidth={1.5} />
@@ -184,7 +185,7 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
         {isXOR && <path d={`M ${bx - 6},${by} Q ${bx - 2},${by + bh / 2} ${bx - 6},${by + bh}`} fill="none" stroke={cx} strokeWidth={strokeW} />}
         <path
           d={`M ${bx},${by} Q ${bx + bw * 0.5},${by} ${bx + bw},${by + bh / 2} Q ${bx + bw * 0.5},${by + bh} ${bx},${by + bh} Q ${bx + bw * 0.3},${by + bh / 2} ${bx},${by} Z`}
-          fill="#1e2a3a" stroke={cx} strokeWidth={strokeW}
+          fill={bodyFill} stroke={cx} strokeWidth={strokeW}
         />
         <line x1={0} y1={h * 0.19} x2={bx + (isXOR ? 8 : 4)} y2={h * 0.19} stroke={gray} strokeWidth={1.5} />
         <line x1={0} y1={h * 0.5} x2={bx + (isXOR ? 6 : 2)} y2={h * 0.5} stroke={gray} strokeWidth={1.5} />
@@ -192,7 +193,7 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
         {isNOR ? (
           <>
             <line x1={bx + bw} y1={h / 2} x2={w - bubbleR * 2 - 2} y2={h / 2} stroke={gray} strokeWidth={1.5} />
-            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />
+            <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill={bodyFill} stroke={cx} strokeWidth={strokeW} />
           </>
         ) : (
           <line x1={bx + bw} y1={h / 2} x2={w} y2={h / 2} stroke={gray} strokeWidth={1.5} />
@@ -266,7 +267,7 @@ function ComponentBody({ component, selected, lightMode, onLabelChange }: {
   if (GATE_TYPES.has(type)) {
     return (
       <div className="w-full h-full" style={{ position: 'relative' }}>
-        <GateSymbol type={type} w={width} h={height} />
+        <GateSymbol type={type} w={width} h={height} lightMode={lightMode} />
       </div>
     )
   }

@@ -280,8 +280,8 @@ export default function Toolbar({
 
       <div className="flex-1" />
 
-      <div className={`flex items-center gap-3 text-xs font-mono ${lightMode ? 'text-gray-500' : 'text-gray-500'}`}>
-        <span>{componentCount} comps</span>
+      <div className={`flex items-center gap-3 text-xs font-mono ${lightMode ? 'text-gray-700' : 'text-gray-500'}`}>
+        <span>{componentCount} components</span>
         <span>{wireCount} wires</span>
       </div>
 

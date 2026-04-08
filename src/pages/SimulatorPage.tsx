@@ -4,7 +4,6 @@ import { AND_GATE_DEMO } from '../data/sampleCircuits'
 import { useSimulation } from '../hooks/useSimulation'
 import { useCanvas } from '../hooks/useCanvas'
 import { useWiring } from '../hooks/useWiring'
-import { createComponent } from '../data/components'
 import Toolbar from '../components/simulator/Toolbar'
 import ComponentPanel from '../components/simulator/ComponentPanel'
 import SimulatorCanvas from '../components/simulator/SimulatorCanvas'
@@ -44,7 +43,7 @@ export default function SimulatorPage() {
     undo,
   } = useSimulation(getInitialCircuit())
 
-  const { viewport, setViewport, canvasRef, screenToWorld, spaceHeld } = useCanvas()
+  const { viewport, setViewport, canvasRef, screenToWorld } = useCanvas()
   const { wiringState, beginWire, endWire, cancelWire, updateMousePos } = useWiring()
 
   const [selectedId, setSelectedId] = useState<string | null>(null)

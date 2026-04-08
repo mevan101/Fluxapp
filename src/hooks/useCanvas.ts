@@ -104,5 +104,5 @@ export function useCanvas() {
     }
   }, [handleWheel, handleMouseDown, handleMouseMove, handleMouseUp])
 
-  return { viewport, setViewport, canvasRef, worldToScreen, screenToWorld, spaceHeld }
+  return { viewport, setViewport, canvasRef, worldToScreen, screenToWorld }
 }
