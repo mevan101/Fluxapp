@@ -184,7 +184,7 @@ function GateSymbol({ type, w, h }: { type: string; w: number; h: number }) {
         <line x1={0} y1={h * 0.19} x2={bx + (isXOR ? 8 : 4)} y2={h * 0.19} stroke={gray} strokeWidth={1.5} />
         <line x1={0} y1={h * 0.5} x2={bx + (isXOR ? 6 : 2)} y2={h * 0.5} stroke={gray} strokeWidth={1.5} />
         <line x1={0} y1={h * 0.81} x2={bx + (isXOR ? 8 : 4)} y2={h * 0.81} stroke={gray} strokeWidth={1.5} />
-        {(isNOR || isXOR && false) ? (
+        {isNOR ? (
           <>
             <line x1={bx + bw} y1={h / 2} x2={w - bubbleR * 2 - 2} y2={h / 2} stroke={gray} strokeWidth={1.5} />
             <circle cx={w - bubbleR} cy={h / 2} r={bubbleR} fill="#1e2a3a" stroke={cx} strokeWidth={strokeW} />

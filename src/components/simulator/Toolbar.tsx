@@ -373,10 +373,13 @@ export default function Toolbar({
         >
           <div
             className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 w-[480px] max-w-[95vw]"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="shortcuts-title"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-signal font-mono font-bold text-lg flex items-center gap-2">
+              <h2 id="shortcuts-title" className="text-signal font-mono font-bold text-lg flex items-center gap-2">
                 <HelpCircle className="w-5 h-5" /> Keyboard Shortcuts
               </h2>
               <button onClick={() => setShowHelp(false)} className="text-gray-400 hover:text-white transition-colors">

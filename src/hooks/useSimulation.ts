@@ -117,7 +117,7 @@ function propagateSignals(circ: Circuit): Circuit {
           const prevClk = (comp.state.prevClk ?? 0) as number
           const currClk = clkPin?.signal ?? 0
           if (prevClk === 0 && currClk === 1 && tPin !== undefined) {
-            if (tPin.signal === 1) comp.state.q = comp.state.q === 1 ? 0 : 1
+            if (tPin.signal === 1) comp.state.q = (comp.state.q as number) === 1 ? 0 : 1
           }
           comp.state.prevClk = currClk
           if (outputPins[0]) outputPins[0].signal = ((comp.state.q ?? 0) as number) === 1 ? 1 : 0
