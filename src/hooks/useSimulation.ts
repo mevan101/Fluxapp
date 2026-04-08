@@ -90,6 +90,80 @@ function propagateSignals(circ: Circuit): Circuit {
           if (outputPins[1]) outputPins[1].signal = ((comp.state.q ?? 0) as number) === 1 ? 0 : 1
           break
         }
+        case 'XNOR':
+          if (outputPins[0]) outputPins[0].signal = (inputPins.filter(p => p.signal === 1).length % 2 === 0 ? 1 : 0) as 0 | 1
+          break
+        case 'BUFFER':
+          if (outputPins[0]) outputPins[0].signal = (inputPins[0]?.signal ?? 0) as 0 | 1
+          break
+        case 'AND3':
+          if (outputPins[0]) outputPins[0].signal = (inputPins.every(p => p.signal === 1) ? 1 : 0) as 0 | 1
+          break
+        case 'OR3':
+          if (outputPins[0]) outputPins[0].signal = (inputPins.some(p => p.signal === 1) ? 1 : 0) as 0 | 1
+          break
+        case 'NAND3':
+          if (outputPins[0]) outputPins[0].signal = (inputPins.every(p => p.signal === 1) ? 0 : 1) as 0 | 1
+          break
+        case 'NOR3':
+          if (outputPins[0]) outputPins[0].signal = (inputPins.some(p => p.signal === 1) ? 0 : 1) as 0 | 1
+          break
+        case 'XOR3':
+          if (outputPins[0]) outputPins[0].signal = (inputPins.filter(p => p.signal === 1).length % 2 === 1 ? 1 : 0) as 0 | 1
+          break
+        case 'T_FLIP_FLOP': {
+          const tPin = comp.pins.find(p => p.name === 'T')
+          const clkPin = comp.pins.find(p => p.name === 'CLK')
+          const prevClk = (comp.state.prevClk ?? 0) as number
+          const currClk = clkPin?.signal ?? 0
+          if (prevClk === 0 && currClk === 1 && tPin !== undefined) {
+            if (tPin.signal === 1) comp.state.q = (comp.state.q as number) === 1 ? 0 : 1
+          }
+          comp.state.prevClk = currClk
+          if (outputPins[0]) outputPins[0].signal = ((comp.state.q ?? 0) as number) === 1 ? 1 : 0
+          if (outputPins[1]) outputPins[1].signal = ((comp.state.q ?? 0) as number) === 1 ? 0 : 1
+          break
+        }
+        case 'SR_LATCH': {
+          const sPin = comp.pins.find(p => p.name === 'S')
+          const rPin = comp.pins.find(p => p.name === 'R')
+          if (sPin && rPin) {
+            if (sPin.signal === 1 && rPin.signal === 1) comp.state.q = 1 // invalid → Q=1 by convention
+            else if (sPin.signal === 1) comp.state.q = 1
+            else if (rPin.signal === 1) comp.state.q = 0
+            // else hold
+          }
+          if (outputPins[0]) outputPins[0].signal = ((comp.state.q ?? 0) as number) === 1 ? 1 : 0
+          if (outputPins[1]) outputPins[1].signal = ((comp.state.q ?? 0) as number) === 1 ? 0 : 1
+          break
+        }
+        case 'DECODER_2_4': {
+          const aPin = comp.pins.find(p => p.name === 'A')
+          const bPin = comp.pins.find(p => p.name === 'B')
+          const y0 = comp.pins.find(p => p.name === 'Y0')
+          const y1 = comp.pins.find(p => p.name === 'Y1')
+          const y2 = comp.pins.find(p => p.name === 'Y2')
+          const y3 = comp.pins.find(p => p.name === 'Y3')
+          if (aPin && bPin) {
+            const idx = aPin.signal + bPin.signal * 2
+            if (y0) y0.signal = idx === 0 ? 1 : 0
+            if (y1) y1.signal = idx === 1 ? 1 : 0
+            if (y2) y2.signal = idx === 2 ? 1 : 0
+            if (y3) y3.signal = idx === 3 ? 1 : 0
+          }
+          break
+        }
+        case 'DEMUX': {
+          const iPin = comp.pins.find(p => p.name === 'I')
+          const sPin = comp.pins.find(p => p.name === 'S')
+          const y0 = comp.pins.find(p => p.name === 'Y0')
+          const y1 = comp.pins.find(p => p.name === 'Y1')
+          if (iPin && sPin) {
+            if (y0) y0.signal = sPin.signal === 0 ? iPin.signal : 0
+            if (y1) y1.signal = sPin.signal === 1 ? iPin.signal : 0
+          }
+          break
+        }
         case 'HALF_ADDER': {
           const aPin = comp.pins.find(p => p.name === 'A')
           const bPin = comp.pins.find(p => p.name === 'B')

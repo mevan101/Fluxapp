@@ -6,6 +6,7 @@ interface WireLayerProps {
   height: number
   tempWire?: { x1: number; y1: number; x2: number; y2: number } | null
   onWireClick?: (wireId: string) => void
+  lightMode?: boolean
 }
 
 function pathD(pts: { x: number; y: number }[]) {
@@ -13,7 +14,7 @@ function pathD(pts: { x: number; y: number }[]) {
   return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ')
 }
 
-export default function WireLayer({ wires, width, height, tempWire, onWireClick }: WireLayerProps) {
+export default function WireLayer({ wires, width, height, tempWire, onWireClick, lightMode }: WireLayerProps) {
   return (
     <svg
       style={{
@@ -37,7 +38,9 @@ export default function WireLayer({ wires, width, height, tempWire, onWireClick 
       </defs>
 
       {wires.map(wire => {
-        const color = wire.signal === 1 ? '#00d4ff' : '#374151'
+        const color = wire.signal === 1
+          ? (lightMode ? '#0ea5e9' : '#00d4ff')
+          : (lightMode ? '#6b7280' : '#374151')
         const d = pathD(wire.path)
         return (
           <g key={wire.id} style={{ pointerEvents: 'stroke' }} onClick={() => onWireClick?.(wire.id)}>
